@@ -122,6 +122,14 @@
     z-index: -1;
     pointer-events: none;
   }
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-touch-callout: none; /* Desactivar menú contextual iOS */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 </style>
 <style>
   .botones a {
@@ -223,6 +231,9 @@
     lastX = null;
     lastY = null;
   });
+</script>
+<script>
+  document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
