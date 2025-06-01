@@ -119,8 +119,19 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
+    width: 100vw;
+    height: 100vh;
+  }
+  #drawingCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+    width: 100vw;
+    height: 100vh;
   }
   img {
     -webkit-user-drag: none;
@@ -130,6 +141,62 @@
     -ms-user-select: none;
     user-select: none;
   }
+  /* --- Modo oscuro: invierte logo, subtítulo y botones --- */
+  @media (prefers-color-scheme: dark) {
+    body, html {
+      background-color: #121212;
+      color: #eee;
+    }
+
+    #logo,
+    #subtitulo,
+    .botones img {
+      filter: invert(1) hue-rotate(180deg);
+    }
+  }
+  .tiktok-dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tiktok-light {
+      display: none;
+    }
+    .tiktok-dark {
+      display: inline;
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+  }
+
+  .bounce {
+    animation-name: bounce;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+  @keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.pulse {
+  animation-name: pulse;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
 </style>
 <style>
   .botones a {
@@ -141,6 +208,7 @@
 </head>
 <body>
   <canvas id="backgroundCanvas"></canvas>
+  <canvas id="drawingCanvas"></canvas>
   <div class="container">
     <img id="logo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo.png" alt="Logo película" />
     <img id="subtitulo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/subtitulo.png" alt="Dirigido por..." />
@@ -152,25 +220,50 @@
         <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-instagram.png" alt="Instagram" />
       </a>
       <a href="https://www.tiktok.com/@huyedeti" target="_blank" rel="noopener noreferrer">
-        <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-tiktok.png" alt="TikTok" />
+        <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-tiktok.png" alt="TikTok" class="tiktok-light" />
+        <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-tiktok-white.png" alt="TikTok Blanco" class="tiktok-dark" />
       </a>
     </div>
   </div>
+  <div id="easterEggBanner" style="display:none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: white; text-align: center; padding: 10px 20px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; z-index: 10;">
+    Pulsa tres veces de nuevo sobre el logo para desactivar el efecto
+  </div>
 <script>
-  const canvas = document.getElementById('backgroundCanvas');
-  const ctx = canvas.getContext('2d');
+  const backgroundCanvas = document.getElementById('backgroundCanvas');
+  const bgCtx = backgroundCanvas.getContext('2d');
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  const drawingCanvas = document.getElementById('drawingCanvas');
+  const drawCtx = drawingCanvas.getContext('2d');
+
+  function resizeCanvases() {
+    backgroundCanvas.width = window.innerWidth;
+    backgroundCanvas.height = window.innerHeight;
+    drawingCanvas.width = window.innerWidth;
+    drawingCanvas.height = window.innerHeight;
   }
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  window.addEventListener('resize', resizeCanvases);
+  resizeCanvases();
+
+  let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  function updateStrokeColor() {
+    drawCtx.strokeStyle = isDarkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
+  }
+
+  updateStrokeColor();
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    isDarkMode = e.matches;
+    updateStrokeColor();
+  });
 
   let lastX = null;
   let lastY = null;
   let paused = false;
+  let easterEggActive = false;
+  let easterEggInterval = null;
+  let bannerTimeoutId = null;
 
   function drawLine(x, y) {
     if (lastX === null || lastY === null) {
@@ -178,14 +271,13 @@
       lastY = y;
       return;
     }
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
+    drawCtx.lineWidth = 2;
+    drawCtx.lineCap = 'round';
 
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
+    drawCtx.beginPath();
+    drawCtx.moveTo(lastX, lastY);
+    drawCtx.lineTo(x, y);
+    drawCtx.stroke();
 
     lastX = x;
     lastY = y;
@@ -214,14 +306,14 @@
   });
 
   window.addEventListener('mousemove', (e) => {
-    if (paused) return;
-    const rect = canvas.getBoundingClientRect();
+    if (paused || easterEggActive) return;
+    const rect = drawingCanvas.getBoundingClientRect();
     drawLine(e.clientX - rect.left, e.clientY - rect.top);
   });
 
   window.addEventListener('touchmove', (e) => {
-    if (paused) return;
-    const rect = canvas.getBoundingClientRect();
+    if (paused || easterEggActive) return;
+    const rect = drawingCanvas.getBoundingClientRect();
     const touch = e.touches[0];
     drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
     e.preventDefault();
@@ -231,6 +323,87 @@
     lastX = null;
     lastY = null;
   });
+
+  // Easter egg activation
+  const logo = document.getElementById('logo');
+  logo.style.cursor = 'pointer';
+  const originalLogoSrc = logo.src;
+
+  let clickCount = 0;
+
+  logo.addEventListener('click', () => {
+    clickCount++;
+
+    if (clickCount === 3) {
+      if (!easterEggActive) {
+        easterEggActive = true;
+        startEasterEgg();
+      } else {
+        easterEggActive = false;
+        stopEasterEgg();
+      }
+      clickCount = 0;
+    }
+
+    setTimeout(() => {
+      clickCount = 0;
+    }, 800);
+  });
+
+  function startEasterEgg() {
+    logo.src = 'https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo-red.png';
+    let hue = 0;
+    easterEggInterval = setInterval(() => {
+      hue = (hue + 10) % 360;
+      bgCtx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+      bgCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+
+      const logoHue = (hue + 180) % 360; // Color complementario para contraste
+      logo.style.filter = `hue-rotate(${logoHue}deg) brightness(2) drop-shadow(0 0 3px rgba(0,0,0,0.7))`;
+
+      logo.classList.add('bounce');
+      logo.style.animationDelay = '0s';
+
+      const subtitulo = document.getElementById('subtitulo');
+      subtitulo.classList.add('bounce');
+      subtitulo.style.animationDelay = '1s';
+
+      const botones = document.querySelectorAll('.botones img');
+      if (botones.length >= 2) {
+        botones[0].classList.add('pulse');
+        botones[0].style.animationDelay = '0s';
+        botones[1].classList.add('pulse');
+        botones[1].style.animationDelay = '1s';
+      }
+    }, 100);
+    bannerTimeoutId = setTimeout(() => {
+      document.getElementById('easterEggBanner').style.display = 'block';
+    }, 10000);
+  }
+
+  function stopEasterEgg() {
+    clearTimeout(bannerTimeoutId);
+    bannerTimeoutId = null;
+    document.getElementById('easterEggBanner').style.display = 'none';
+    clearInterval(easterEggInterval);
+    easterEggInterval = null;
+    bgCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+    logo.src = originalLogoSrc;
+    logo.style.filter = '';
+
+    logo.classList.remove('bounce');
+    logo.style.animationDelay = '';
+
+    const subtitulo = document.getElementById('subtitulo');
+    subtitulo.classList.remove('bounce');
+    subtitulo.style.animationDelay = '';
+
+    const botones = document.querySelectorAll('.botones img');
+    botones.forEach(btn => {
+      btn.classList.remove('pulse');
+      btn.style.animationDelay = '';
+    });
+  }
 </script>
 <script>
   document.addEventListener('contextmenu', e => e.preventDefault());
