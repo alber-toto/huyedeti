@@ -2,77 +2,76 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Huye de Ti</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUYE DE TI</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     body {
       background-color: white;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 20px;
+      max-width: 600px;
+      margin: 50px auto;
       text-align: center;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
     }
 
     .logo, .subtitulo {
-      max-width: 90%;
+      width: 100%;
+      max-width: 400px;
       height: auto;
+      display: block;
+      margin: 0 auto 20px;
     }
 
-    .botones {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .botones img {
-      max-width: 200px;
+    .boton {
+      width: 220px;
       height: auto;
-      cursor: pointer;
+      margin: 10px;
+      transition: transform 0.2s;
     }
 
-    .social {
+    .boton:hover {
+      transform: scale(1.05);
+    }
+
+    .redes {
       margin-top: 30px;
-      display: flex;
-      gap: 20px;
-      justify-content: center;
     }
 
-    .social img {
-      width: 32px;
-      height: 32px;
+    .icono-red {
+      width: 50px;
+      height: auto;
+      margin: 0 10px;
+      vertical-align: middle;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="assets/logo.png" alt="Logo Huye de Ti" class="logo">
-    <img src="assets/subtitulo.png" alt="Dirigido por..." class="subtitulo">
+    <img src="assets/subtitulo.png" alt="Subtítulo" class="subtitulo">
 
-    <div class="botones">
-      <a href="https://www.instagram.com/channel/AbYNA26T1E0gtN6k/" target="_blank">
-        <img src="assets/btn-novedades.png" alt="Seguir novedades">
-      </a>
-      <a href="https://casting.huyedeti.com" target="_blank">
-        <img src="assets/btn-casting.png" alt="Apuntarme al casting">
-      </a>
-    </div>
+    <a href="https://casting.huyedeti.com" target="_blank">
+      <img src="assets/btn-casting.png" alt="Casting" class="boton">
+    </a>
 
-    <div class="social">
-      <a href="https://www.instagram.com/huyedeti" target="_blank">
-        <img src="assets/icono-instagram.png" alt="Instagram">
-      </a>
+    <a href="https://www.instagram.com/channel/AbYNA26T1E0gtN6k/" target="_blank">
+      <img src="assets/btn-novedades.png" alt="Novedades" class="boton">
+    </a>
+
+    <div class="redes">
       <a href="https://www.tiktok.com/@huyedeti" target="_blank">
-        <img src="assets/icono-tiktok.png" alt="TikTok">
+        <img src="assets/logo-tiktok.png" alt="TikTok" class="icono-red">
+      </a>
+      <a href="https://www.instagram.com/huyedeti" target="_blank">
+        <img src="assets/logo-ig.png" alt="Instagram" class="icono-red">
       </a>
     </div>
   </div>
