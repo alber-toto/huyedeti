@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Huye de Ti | La Película</title>
+<style>
+  body, html {
+    height: 100vh;
+    margin: 0;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    overflow: hidden;
+  }
+
+  @media (max-height: 600px) {
+    body, html {
+      overflow-y: auto;
+    }
+  }
+
+  .container {
+    text-align: center;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #logo {
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  #subtitulo {
+    margin-bottom: 5px;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  #logo, #subtitulo {
+    display: block;
+    margin: 0 auto;
+  }
+  .botones {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+  .botones img {
+    width: 90%;
+    max-width: 500px;
+    height: 100px;
+    cursor: pointer;
+    position: relative;
+    object-fit: contain;
+  }
+  .sociales {
+    display: flex;
+    justify-content: center;
+    gap: 60px; /* mucho espacio */
+    margin-top: 15px; /* reducido */
+  }
+  .sociales img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .botones {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px !important;
+      margin-top: 30px !important;
+    }
+    .botones a {
+      margin-bottom: 0 !important;
+    }
+    .botones img {
+      width: 90vw;
+      max-width: 350px;
+      height: auto;
+    }
+    .sociales {
+      gap: 15px !important;
+      margin-top: 30px;
+    }
+    .sociales img {
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
+
+</style>
+<style>
+  .botones a {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <img id="logo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo.png" alt="Logo película" />
+    <img id="subtitulo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/subtitulo.png" alt="Dirigido por..." />
+    <div class="botones">
+      <a href="https://www.instagram.com/channel/AbYNA26T1E0gtN6k/" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-novedades.png" alt="Novedades" /></a><a href="https://casting.huyedeti.com" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-casting.png" alt="Casting" /></a>
+    </div>
+    <div class="sociales">
+      <a href="https://www.instagram.com/huyedeti" target="_blank" rel="noopener noreferrer">
+        <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-instagram.png" alt="Instagram" />
+      </a>
+      <a href="https://www.tiktok.com/@huyedeti" target="_blank" rel="noopener noreferrer">
+        <img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/icono-tiktok.png" alt="TikTok" />
+      </a>
+    </div>
+  </div>
+</body>
+</html>
