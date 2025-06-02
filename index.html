@@ -16,6 +16,10 @@
     padding-top: 40px;
     padding-bottom: 40px;
     overflow: hidden;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   @media (max-height: 600px) {
@@ -69,10 +73,38 @@
     width: 90%;
     max-width: 500px;
     height: 100px;
-    cursor: pointer;
+    /* cursor: pointer; */
     position: relative;
     object-fit: contain;
   }
+  .botones img[alt="Novedades"]:hover {
+    transform: scale(0.97);
+    transition: transform 0.2s ease;
+  }
+
+  .botones img[alt="Casting"] {
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .botones img[alt="Casting"]:hover {
+    transform: scale(1.05);
+    filter: invert(1);
+  }
+
+  /* 
+  .botones img:hover,
+  .sociales img:hover {
+    cursor: pointer;
+  }
+  .botones img[src$="btn-novedades.png"],
+  .botones img[src$="btn-casting.png"],
+  .sociales img[src$="icono-instagram.png"],
+  .sociales img[src$="icono-tiktok.png"],
+  .sociales img[src$="icono-tiktok-white.png"] {
+    cursor: pointer;
+  }
+  */
+
   .sociales {
     display: flex;
     justify-content: center;
@@ -83,7 +115,26 @@
     width: 40px;
     height: 40px;
     object-fit: contain;
+    /* cursor: pointer; */
+  }
+
+  /*
+  .botones img,
+  .sociales img {
     cursor: pointer;
+  }
+  */
+
+
+  .botones > a,
+  .sociales > a {
+    cursor: pointer;
+  }
+
+  .botones > a:hover,
+  .sociales > a:hover {
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
   }
 
   @media (max-width: 768px) {
@@ -153,6 +204,10 @@
     .botones img {
       filter: invert(1) hue-rotate(180deg);
     }
+    /* Invertir el botón de "Casting" nuevamente en modo oscuro al hacer hover */
+    .botones img[alt="Casting"]:hover {
+      filter: invert(0);
+    }
   }
   .tiktok-dark {
     display: none;
@@ -183,20 +238,52 @@
     animation-timing-function: ease-in-out;
   }
   @keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
   }
-  50% {
-    transform: scale(1.1);
-  }
-}
 
-.pulse {
-  animation-name: pulse;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
+  .pulse {
+    animation-name: pulse;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+
+  /* --- Particle effect for casting button --- */
+  @keyframes particles {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(1.5);
+    }
+  }
+
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: black;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particles 0.6s ease-out forwards;
+    z-index: 5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .particle {
+      background: white;
+    }
+  }
+  .footer-over-banner {
+    bottom: 60px !important;
+  }
 </style>
 <style>
   .botones a {
@@ -225,8 +312,8 @@
       </a>
     </div>
   </div>
-  <div id="easterEggBanner" style="display:none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: white; text-align: center; padding: 10px 20px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; z-index: 10;">
-    Pulsa tres veces de nuevo sobre el logo para desactivar el efecto
+  <div id="easterEggBanner" style="display:none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: white; text-align: center; padding: 10px 20px; font-family: &quot;Comic Sans MS&quot;, &quot;Comic Sans&quot;, cursive; font-size: 16px; z-index: 10;">
+    Pulsa en el logo para desactivar el efecto
   </div>
 <script>
   const backgroundCanvas = document.getElementById('backgroundCanvas');
@@ -264,6 +351,34 @@
   let easterEggActive = false;
   let easterEggInterval = null;
   let bannerTimeoutId = null;
+
+  // --- Particle effect for casting button ---
+  const castingBtn = document.querySelector('.botones img[alt="Casting"]');
+
+  castingBtn.addEventListener('mouseenter', () => {
+    castingBtn.addEventListener('mousemove', spawnParticles);
+  });
+
+  castingBtn.addEventListener('mouseleave', () => {
+    castingBtn.removeEventListener('mousemove', spawnParticles);
+  });
+
+  function spawnParticles(e) {
+    const amount = 2;
+    for (let i = 0; i < amount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = `${e.clientX}px`;
+      particle.style.top = `${e.clientY}px`;
+      const dx = (Math.random() - 0.5) * 40 + 'px';
+      const dy = (Math.random() - 0.5) * 40 + 'px';
+      particle.style.setProperty('--dx', dx);
+      particle.style.setProperty('--dy', dy);
+      particle.style.position = 'fixed';
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 600);
+    }
+  }
 
   function drawLine(x, y) {
     if (lastX === null || lastY === null) {
@@ -329,25 +444,15 @@
   logo.style.cursor = 'pointer';
   const originalLogoSrc = logo.src;
 
-  let clickCount = 0;
-
   logo.addEventListener('click', () => {
-    clickCount++;
-
-    if (clickCount === 3) {
-      if (!easterEggActive) {
-        easterEggActive = true;
-        startEasterEgg();
-      } else {
-        easterEggActive = false;
-        stopEasterEgg();
-      }
-      clickCount = 0;
+    if (!easterEggActive) {
+      easterEggActive = true;
+      document.getElementById('footer').style.fontFamily = '"Comic Sans MS", "Comic Sans", cursive';
+      startEasterEgg();
+    } else {
+      easterEggActive = false;
+      stopEasterEgg();
     }
-
-    setTimeout(() => {
-      clickCount = 0;
-    }, 800);
   });
 
   function startEasterEgg() {
@@ -378,6 +483,8 @@
     }, 100);
     bannerTimeoutId = setTimeout(() => {
       document.getElementById('easterEggBanner').style.display = 'block';
+      document.getElementById('footer').classList.add('footer-over-banner');
+      document.getElementById('footer').style.mixBlendMode = 'difference';
     }, 10000);
   }
 
@@ -385,6 +492,9 @@
     clearTimeout(bannerTimeoutId);
     bannerTimeoutId = null;
     document.getElementById('easterEggBanner').style.display = 'none';
+    document.getElementById('footer').classList.remove('footer-over-banner');
+    document.getElementById('footer').style.fontFamily = 'Helvetica, Arial, sans-serif';
+    document.getElementById('footer').style.mixBlendMode = '';
     clearInterval(easterEggInterval);
     easterEggInterval = null;
     bgCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
@@ -407,6 +517,10 @@
 </script>
 <script>
   document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('dragstart', e => e.preventDefault());
 </script>
+<div id="footer" style="position: fixed; bottom: 15px; width: 100%; text-align: center; font-size: 12px; color: gray; font-family: Helvetica, Arial, sans-serif; z-index: 5;">
+  <a href="https://www.instagram.com/bertix_toto" target="_blank" rel="noopener noreferrer" style="color: gray; text-decoration: none;">©2025 Alberto Montull</a>
+</div>
 </body>
 </html>
