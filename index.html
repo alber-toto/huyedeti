@@ -179,7 +179,6 @@
     top: 0;
     left: 0;
     z-index: 1;
-    pointer-events: none;
     width: 100vw;
     height: 100vh;
   }
@@ -283,6 +282,71 @@
   .footer-over-banner {
     bottom: 60px !important;
   }
+
+  /* Controles de dibujo */
+  .drawing-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    z-index: 100000; /* Máxima prioridad */
+    pointer-events: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    mix-blend-mode: exclusion; /* Para asegurar visibilidad */
+  }
+
+  .drawing-controls button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+  }
+
+  .drawing-controls button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  }
+
+  .drawing-controls button:hover {
+    transform: translateY(-1px);
+    background: rgba(0, 0, 0, 0.95);
+    border-color: white;
+  }
+
+  .drawing-controls button:active {
+    transform: translateY(1px);
+  }
+
+  /* Feedback states */
+  .drawing-controls button.success {
+    background: #48bb78 !important;
+  }
+
+  .drawing-controls button.error {
+    background: #f56565 !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .drawing-controls button {
+      border-color: rgba(0, 0, 0, 0.8);
+      background: rgba(255, 255, 255, 0.85);
+      color: black;
+    }
+    .drawing-controls button:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: black;
+    }
+  }
 </style>
 <style>
   .botones a {
@@ -295,6 +359,7 @@
 <body>
   <canvas id="backgroundCanvas"></canvas>
   <canvas id="drawingCanvas"></canvas>
+  <div id="touchLayer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div>
   <div class="container">
     <img id="logo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo.png" alt="Logo película" />
     <img id="subtitulo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/subtitulo.png" alt="Dirigido por..." />
@@ -440,6 +505,76 @@
     lastY = null;
   });
 
+  // Control de dibujo
+  const touchLayer = document.getElementById('touchLayer');
+  const drawingControls = document.querySelector('.drawing-controls');
+  const saveDrawingBtn = document.getElementById('saveDrawing');
+  const clearDrawingBtn = document.getElementById('clearDrawing');
+  let isDrawing = false;
+
+  // Hacer que el canvas sea interactivo solo al dibujar
+  document.addEventListener('mousedown', () => {
+    isDrawing = true;
+    drawingCanvas.style.pointerEvents = 'auto';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDrawing = false;
+    drawingCanvas.style.pointerEvents = 'none';
+  });
+
+  // Para dispositivos táctiles
+  document.addEventListener('touchstart', () => {
+    isDrawing = true;
+    drawingCanvas.style.pointerEvents = 'auto';
+  });
+
+  document.addEventListener('touchend', () => {
+    isDrawing = false;
+    drawingCanvas.style.pointerEvents = 'none';
+  });
+
+  document.addEventListener('touchcancel', () => {
+    isDrawing = false;
+    drawingCanvas.style.pointerEvents = 'none';
+  });
+
+  // Restaurar dibujo guardado al cargar
+  window.addEventListener('load', () => {
+    const savedDrawing = localStorage.getItem('savedDrawing');
+    if (savedDrawing) {
+      const img = new Image();
+      img.onload = () => {
+        drawCtx.drawImage(img, 0, 0);
+      };
+      img.src = savedDrawing;
+    }
+  });
+
+  // Guardar dibujo
+  saveDrawingBtn.addEventListener('click', () => {
+    const drawingData = drawingCanvas.toDataURL();
+    localStorage.setItem('savedDrawing', drawingData);
+    
+    // Feedback visual
+    saveDrawingBtn.classList.add('success');
+    setTimeout(() => {
+      saveDrawingBtn.classList.remove('success');
+    }, 1000);
+  });
+
+  // Borrar dibujo
+  clearDrawingBtn.addEventListener('click', () => {
+    drawCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    localStorage.removeItem('savedDrawing');
+    
+    // Feedback visual
+    clearDrawingBtn.classList.add('error');
+    setTimeout(() => {
+      clearDrawingBtn.classList.remove('error');
+    }, 1000);
+  });
+
   // Easter egg activation
   const logo = document.getElementById('logo');
   logo.style.cursor = 'pointer';
@@ -522,6 +657,9 @@
 </script>
 <div id="footer" style="position: fixed; bottom: 15px; width: 100%; text-align: center; font-size: 12px; color: gray; font-family: Helvetica, Arial, sans-serif; z-index: 5;">
   <a href="https://www.instagram.com/bertix_toto" target="_blank" rel="noopener noreferrer" style="color: gray; text-decoration: none;">©2025 Alberto Montull</a>
-</div>
+</div>  <div class="drawing-controls">
+    <button id="saveDrawing">Guardar</button>
+    <button id="clearDrawing">Borrar</button>
+  </div>
 </body>
 </html>
