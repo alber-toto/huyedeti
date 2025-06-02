@@ -13,8 +13,6 @@
     justify-content: center;
     align-items: center;
     font-family: sans-serif;
-    padding-top: 40px;
-    padding-bottom: 40px;
     overflow: hidden;
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none;
@@ -30,8 +28,7 @@
 
   .container {
     text-align: center;
-    width: 100%;
-    max-width: 700px;
+    width: 100vw;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -56,85 +53,70 @@
     display: block;
     margin: 0 auto;
   }
-  /* Fondo transparente para imágenes clave */
-  #logo, #subtitulo,
-  .botones img,
-  .sociales img {
-    background-color: transparent !important;
-  }
-  .botones {
+    .botones {
     display: flex;
     justify-content: center;
-    gap: 5px;
-    margin-top: 10px;
+    gap: 15px;
+    margin-top: 30px;
     margin-bottom: 15px;
   }
   .botones img {
     width: 90%;
     max-width: 500px;
-    height: 100px;
-    /* cursor: pointer; */
+    height: 50px;
     position: relative;
     object-fit: contain;
-  }
-  .botones img[alt="Novedades"]:hover {
-    transform: scale(0.97);
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
   }
 
+  /* Efecto hover para los botones de Info y Equipo: efecto botón físico */
+  .botones img[alt="Info"]:hover,
+  .botones img[alt="Equipo"]:hover {
+    filter: brightness(0.95);
+    transform: translateY(2px);
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  }
+
+  /* Efecto hover para el botón de Casting */
   .botones img[alt="Casting"] {
-    transition: transform 0.2s ease, filter 0.2s ease;
+    height: 56px !important; /* Override inline style */
+    max-height: 56px;
+    transition: all 0.2s ease;
+    margin-top: -3px; /* Ajustado para el nuevo tamaño */
+    margin-bottom: -3px;
   }
-
+  
   .botones img[alt="Casting"]:hover {
     transform: scale(1.05);
-    filter: invert(1);
+    filter: brightness(1.1);
   }
-
-  /* 
-  .botones img:hover,
-  .sociales img:hover {
-    cursor: pointer;
-  }
-  .botones img[src$="btn-novedades.png"],
-  .botones img[src$="btn-casting.png"],
-  .sociales img[src$="icono-instagram.png"],
-  .sociales img[src$="icono-tiktok.png"],
-  .sociales img[src$="icono-tiktok-white.png"] {
-    cursor: pointer;
-  }
-  */
 
   .sociales {
     display: flex;
     justify-content: center;
-    gap: 60px; /* mucho espacio */
-    margin-top: 15px; /* reducido */
+    gap: 30px;
+    margin-top: 40px;
   }
   .sociales img {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     object-fit: contain;
-    /* cursor: pointer; */
+    transition: transform 0.2s ease;
   }
-
-  /*
-  .botones img,
-  .sociales img {
-    cursor: pointer;
-  }
-  */
-
 
   .botones > a,
   .sociales > a {
     cursor: pointer;
+    transition: opacity 0.3s ease;
   }
 
-  .botones > a:hover,
+  .botones > a:not([href*="casting"]):hover,
   .sociales > a:hover {
-    opacity: 0.9;
-    transition: opacity 0.3s ease;
+    opacity: 0.8;
+  }
+
+  .sociales > a:hover img {
+    transform: scale(1.1);
   }
 
   @media (max-width: 768px) {
@@ -143,18 +125,35 @@
       padding-right: 20px;
     }
     .botones {
-      flex-direction: column;
-      align-items: center;
-      gap: 8px !important;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px !important;
       margin-top: 30px !important;
+      max-width: 90vw;
     }
     .botones a {
       margin-bottom: 0 !important;
     }
+    /* El botón de casting ocupa todo el ancho */
+    .botones a[href*="casting"] {
+      width: 100%;
+      order: -1; /* Lo pone primero */
+      margin-bottom: 10px !important; /* Espacio extra entre las dos líneas */
+    }
+    .botones a:not([href*="casting"]) {
+      width: calc(50% - 8px); /* Mitad del ancho menos la mitad del gap */
+      flex-shrink: 1;
+    }
     .botones img {
-      width: 90vw;
-      max-width: 350px;
-      height: auto;
+      width: 100%;
+      height: 50px;
+      object-fit: contain;
+    }
+    .botones img[alt="Casting"] {
+      height: 56px !important;
+      width: 100%;
+      max-width: none;
+      object-fit: contain;
     }
     .sociales {
       gap: 15px !important;
@@ -299,8 +298,10 @@
   <div class="container">
     <img id="logo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo.png" alt="Logo película" />
     <img id="subtitulo" src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/subtitulo.png" alt="Dirigido por..." />
-    <div class="botones">
-      <a href="https://www.instagram.com/channel/AbYNA26T1E0gtN6k/" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-novedades.png" alt="Novedades" /></a><a href="https://casting.huyedeti.com" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-casting.png" alt="Casting" /></a>
+    <div class="botones" style="display: flex; justify-content: center; align-items: center; width: 100%; max-width: 700px; gap: 15px; margin-top: 30px;">
+      <a href="https://go.huyedeti.com/canal-ig" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-info.png" alt="Info" style="height: 50px; width: auto;" /></a>
+      <a href="#"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-equipo.png" alt="Equipo" style="height: 50px; width: auto;" /></a>
+      <a href="https://casting.huyedeti.com" target="_blank" rel="noopener noreferrer"><img src="https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/btn-casting.png" alt="Casting" style="width: auto;" /></a>
     </div>
     <div class="sociales">
       <a href="https://www.instagram.com/huyedeti" target="_blank" rel="noopener noreferrer">
@@ -457,29 +458,29 @@
 
   function startEasterEgg() {
     logo.src = 'https://raw.githubusercontent.com/alber-toto/huyedeti/main/assets/logo-red.png';
+    const elements = {
+      logo: { element: logo, animation: 'bounce', delay: '0s' },
+      subtitulo: { element: document.getElementById('subtitulo'), animation: 'bounce', delay: '1s' },
+      botones: Array.from(document.querySelectorAll('.botones img')).slice(0, 2)
+        .map((btn, i) => ({ element: btn, animation: 'pulse', delay: i + 's' }))
+    };
+
     let hue = 0;
     easterEggInterval = setInterval(() => {
       hue = (hue + 10) % 360;
       bgCtx.fillStyle = `hsl(${hue}, 100%, 50%)`;
       bgCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
 
-      const logoHue = (hue + 180) % 360; // Color complementario para contraste
-      logo.style.filter = `hue-rotate(${logoHue}deg) brightness(2) drop-shadow(0 0 3px rgba(0,0,0,0.7))`;
+      const logoHue = (hue + 180) % 360;
+      elements.logo.element.style.filter = `hue-rotate(${logoHue}deg) brightness(2) drop-shadow(0 0 3px rgba(0,0,0,0.7))`;
 
-      logo.classList.add('bounce');
-      logo.style.animationDelay = '0s';
-
-      const subtitulo = document.getElementById('subtitulo');
-      subtitulo.classList.add('bounce');
-      subtitulo.style.animationDelay = '1s';
-
-      const botones = document.querySelectorAll('.botones img');
-      if (botones.length >= 2) {
-        botones[0].classList.add('pulse');
-        botones[0].style.animationDelay = '0s';
-        botones[1].classList.add('pulse');
-        botones[1].style.animationDelay = '1s';
-      }
+      // Aplicar animaciones
+      Object.values(elements).flat().forEach(({ element, animation, delay }) => {
+        if (element) {
+          element.classList.add(animation);
+          element.style.animationDelay = delay;
+        }
+      });
     }, 100);
     bannerTimeoutId = setTimeout(() => {
       document.getElementById('easterEggBanner').style.display = 'block';
