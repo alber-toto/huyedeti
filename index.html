@@ -15,6 +15,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Huye de Ti | La Película</title>
+<meta name="description" content="Dirigida por Igor Morales. Huye de ti es un thriller psicológico sobre identidad, adicciones y un juego maldito que atrapa a cinco jóvenes en una casa rural. Descubre más sobre la película, conoce al equipo creativo y entérate de cómo participar en el casting." />
+<meta property="og:title" content="Huye de Ti | La Película" />
+<meta property="og:description" content="Dirigida por Igor Morales. Huye de ti es un thriller psicológico sobre identidad, adicciones y un juego maldito que atrapa a cinco jóvenes en una casa rural." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Huye de Ti" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Huye de Ti | La Película" />
+<meta name="twitter:description" content="Dirigida por Igor Morales. Huye de ti es un thriller psicológico sobre identidad, adicciones y un juego maldito que atrapa a cinco jóvenes en una casa rural." />
 <style>
   body, html {
     height: 100vh;
@@ -551,7 +559,7 @@
     </div>
   </div>
   <div id="easterEggBanner" style="display:none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: white; text-align: center; padding: 10px 20px; font-family: &quot;Comic Sans MS&quot;, &quot;Comic Sans&quot;, cursive; font-size: 16px; z-index: 10;">
-    Pulsa en el logo para desactivar el efecto
+    Haz doble clic en el logo para desactivar el efecto
   </div>
 
   <!-- Modal del Equipo -->
@@ -694,15 +702,24 @@
   const logo = document.getElementById('logo');
   logo.style.cursor = 'pointer';
   const originalLogoSrc = logo.src;
+  let lastClickTime = 0;
+  const doubleClickDelay = 300; // tiempo en ms para detectar doble clic
 
-  logo.addEventListener('click', () => {
-    if (!easterEggActive) {
-      easterEggActive = true;
-      document.getElementById('footer').style.fontFamily = '"Comic Sans MS", "Comic Sans", cursive';
-      startEasterEgg();
+  logo.addEventListener('click', (e) => {
+    const clickTime = new Date().getTime();
+    if (clickTime - lastClickTime < doubleClickDelay) {
+      // Doble clic detectado
+      if (!easterEggActive) {
+        easterEggActive = true;
+        document.getElementById('footer').style.fontFamily = '"Comic Sans MS", "Comic Sans", cursive';
+        startEasterEgg();
+      } else {
+        easterEggActive = false;
+        stopEasterEgg();
+      }
+      lastClickTime = 0; // Resetear el tiempo para evitar triples clics
     } else {
-      easterEggActive = false;
-      stopEasterEgg();
+      lastClickTime = clickTime;
     }
   });
 
